@@ -1,0 +1,13 @@
+version: "3"
+services:
+  node-app:
+    build:
+      context: .
+      target: development
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+    # في البرودكشن مش محتاج bind mount عشان الكود جوه الـ image
+    volumes: []
+    command: npm run start
+

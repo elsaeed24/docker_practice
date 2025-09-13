@@ -1,0 +1,40 @@
+version: "3"
+services:
+  node-app:
+    container_name: express-node-app-container
+#    build: .
+    ports:
+      - "4000:4000"
+    networks:
+      - app_net
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - mongo_db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - app_net   # نفس الشبكة
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: example
+
+    networks:
+       - app_net   # 👈 أهو المفتاح
+
+volumes:
+  mongo_db:
+
+
+networks:
+  app_net:
+    driver: bridge
