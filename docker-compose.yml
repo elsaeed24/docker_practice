@@ -5,6 +5,9 @@ services:
 #    build: .
     ports:
       - "4000:4000"
+    depends_on:
+      - mongo
+      - redis
     networks:
       - app_net
   mongo:
@@ -27,9 +30,17 @@ services:
       ME_CONFIG_BASICAUTH_ENABLED: "true"
       ME_CONFIG_BASICAUTH_USERNAME: root
       ME_CONFIG_BASICAUTH_PASSWORD: example
-
+    depends_on:
+      - mongo
     networks:
-       - app_net   # 👈 أهو المفتاح
+       - app_net
+  redis:
+    image: redis
+    restart: always
+    ports:
+        - "6379:6379"
+    networks:
+        - app_net
 
 volumes:
   mongo_db:
