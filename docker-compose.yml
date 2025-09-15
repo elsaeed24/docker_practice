@@ -18,8 +18,22 @@ services:
     environment:
         POSTGRES_USER: root
         POSTGRES_PASSWORD: example
+    ports:
+        - "5432:5432"
     networks:
-        - app_net   # نفس الشبكة
+      - app_net   # نفس الشبكة
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"    # تفتح pgAdmin على http://localhost:5050
+    depends_on:
+      - postgres
+    networks:
+      - app_net
 #  mongo:
 #    image: mongo
 #    restart: always
