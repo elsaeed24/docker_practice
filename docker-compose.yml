@@ -41,6 +41,18 @@ services:
         - "6379:6379"
     networks:
         - app_net
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - 8080:80
+    volumes:
+      # اربط ملف default.conf من جهازك بالمسار الصحيح جوه الكونتينر
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - node-app
+    networks:
+      - app_net
+
 
 volumes:
   mongo_db:
