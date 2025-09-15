@@ -5,34 +5,68 @@ services:
 #    build: .
     ports:
       - "4000:4000"
+    depends_on:
+      - postgres
+      - redis
     networks:
       - app_net
-  mongo:
-    image: mongo
+  postgres:
+    image: postgres
     restart: always
     volumes:
-      - mongo_db:/data/db
+        - postgres_db:/var/lib/postgresql/data
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: example
     networks:
-      - app_net   # نفس الشبكة
-  mongo-express:
-    image: mongo-express
+        - app_net   # نفس الشبكة
+#  mongo:
+#    image: mongo
+#    restart: always
+#    volumes:
+#      - mongo_db:/data/db
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+#    networks:
+#      - app_net   # نفس الشبكة
+#  mongo-express:
+#    image: mongo-express
+#    restart: always
+#    ports:
+#      - 8081:8081
+#    environment:
+#      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+#      ME_CONFIG_BASICAUTH_ENABLED: "true"
+#      ME_CONFIG_BASICAUTH_USERNAME: root
+#      ME_CONFIG_BASICAUTH_PASSWORD: example
+#    depends_on:
+#      - mongo
+#    networks:
+#       - app_net
+  redis:
+    image: redis
     restart: always
     ports:
-      - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-      ME_CONFIG_BASICAUTH_ENABLED: "true"
-      ME_CONFIG_BASICAUTH_USERNAME: root
-      ME_CONFIG_BASICAUTH_PASSWORD: example
-
+        - "6379:6379"
     networks:
-       - app_net   # 👈 أهو المفتاح
+        - app_net
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - 8080:80
+    volumes:
+      # اربط ملف default.conf من جهازك بالمسار الصحيح جوه الكونتينر
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - node-app
+    networks:
+      - app_net
+
 
 volumes:
   mongo_db:
+  postgres_db:
 
 
 networks:
